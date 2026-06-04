@@ -7,4 +7,6 @@ object Screen {
     const val LoanDetails = "loan_details"
     const val ApplyLoan = "apply_loan"
     const val ActiveLoans = "active_loans"
+    const val LoanCalculator = "loan_calculator"
+
 }

@@ -8,16 +8,22 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Calculate
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -40,11 +46,13 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.muindi.stephen.coopbanktest.R
 import com.muindi.stephen.coopbanktest.domain.models.loan.Loan
+import com.muindi.stephen.coopbanktest.navigation.Screen
 import com.muindi.stephen.coopbanktest.presentation.components.LoanItem
 
 @Composable
 fun DashboardAllLoans(
     onLoanClick: (String) -> Unit,
+    onCalculatorClick: () -> Unit = {}
 ) {
 
     val snackBarHostState = remember { SnackbarHostState() }
@@ -61,11 +69,10 @@ fun DashboardAllLoans(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.weight(1f),
+                    horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    val user =
-
                     AsyncImage(
                         model = R.drawable.profile,
                         contentDescription = "User profile avatar",
@@ -82,25 +89,28 @@ fun DashboardAllLoans(
                         error = painterResource(R.drawable.profile)
                     )
 
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier.weight(1f),
-                    ) {
-                        Column(
+                    Spacer(modifier = Modifier.width(12.dp))
 
-                        ) {
-                            Text(
-                                text = "Hi There!",
-                                color = Color.White,
-                                style = MaterialTheme.typography.titleMedium
-                            )
-                            Text(
-                                text = "Boost your income today!",
-                                color = Color.White,
-                                style = MaterialTheme.typography.titleSmall
-                            )
-                        }
+                    Column {
+                        Text(
+                            text = "Hi There!",
+                            color = Color.White,
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Text(
+                            text = "Boost your income today!",
+                            color = Color.White,
+                            style = MaterialTheme.typography.titleSmall
+                        )
                     }
+                }
+
+                IconButton(onClick = onCalculatorClick) {
+                    Icon(
+                        imageVector = Icons.Default.Calculate,
+                        contentDescription = "Loan Calculator",
+                        tint = Color.White
+                    )
                 }
             }
         },

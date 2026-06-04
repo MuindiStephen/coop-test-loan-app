@@ -1,10 +1,12 @@
 package com.muindi.stephen.coopbanktest.data.local.room.entity
 
 import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-@Entity("applyloans")
+@Entity(tableName = "applyloans")
 data class LoanEntity (
-    val id: Int =0,
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
     val loanType: String,
     val period: String,
     val account: String
