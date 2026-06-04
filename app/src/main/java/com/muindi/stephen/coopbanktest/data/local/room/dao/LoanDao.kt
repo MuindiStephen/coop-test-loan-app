@@ -12,7 +12,10 @@ import kotlinx.coroutines.flow.Flow
 interface LoanDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun applyLoan(loan: List<LoanEntity>)
+    suspend fun applyLoan(loan: LoanEntity)
+
+    @Query("SELECT * FROM applyloans WHERE status = 'ACTIVE'")
+    fun getActiveLoans(): Flow<List<LoanEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveCalculation(calculation: LoanCalculationEntity)

@@ -8,7 +8,7 @@ import com.muindi.stephen.coopbanktest.data.local.room.entity.LoanEntity
 
 @Database(
     entities = [LoanEntity::class, LoanCalculationEntity::class],
-    version = 6,
+    version = 7,
     exportSchema = false
 )
 abstract class LoanDB : RoomDatabase() {

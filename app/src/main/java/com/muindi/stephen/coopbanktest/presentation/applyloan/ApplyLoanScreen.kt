@@ -30,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
@@ -41,20 +42,24 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.muindi.stephen.coopbanktest.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ApplyLoanScreen(
     navController: NavController,
+    viewModel: ApplyLoanViewModel
 ) {
 
-    var loanType by remember { mutableStateOf(loanTypes[0]) }
+    val loanType by viewModel.loanType.collectAsState()
     var expanded by remember { mutableStateOf(false) }
-    var loanAmount by remember { mutableStateOf("10,000.00") }
-    var loanPeriod by remember { mutableStateOf("2") }
-    var accountNumber by remember { mutableStateOf("01090145246100") }
+    val loanAmount by viewModel.loanAmount.collectAsState()
+    val loanPeriod by viewModel.loanPeriod.collectAsState()
+    val accountNumber by viewModel.accountNumber.collectAsState()
+    val calculatedValues by viewModel.calculatedValues.collectAsState()
 
     Scaffold(
         topBar = {
@@ -98,7 +103,9 @@ fun ApplyLoanScreen(
         },
         bottomBar = {
             Button(
-                onClick = { },
+                onClick = {
+                    navController.navigate(Screen.LoanDetails)
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
@@ -163,7 +170,7 @@ fun ApplyLoanScreen(
                         androidx.compose.material3.DropdownMenuItem(
                             text = { Text(type) },
                             onClick = {
-                                loanType = type
+                                viewModel.updateLoanType(type)
                                 expanded = false
                             }
                         )
@@ -193,9 +200,9 @@ fun ApplyLoanScreen(
 
             OutlinedTextField(
                 value = loanAmount,
-                onValueChange = { loanAmount = it },
+                onValueChange = { viewModel.updateLoanAmount(it) },
                 prefix = {
-                    Text("KES")
+                    Text("KES ")
                 },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
@@ -221,7 +228,7 @@ fun ApplyLoanScreen(
 
             OutlinedTextField(
                 value = loanPeriod,
-                onValueChange = {},
+                onValueChange = { viewModel.updateLoanPeriod(it) },
                 readOnly = true,
                 trailingIcon = {
                     Icon(
@@ -236,7 +243,7 @@ fun ApplyLoanScreen(
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = "Total Amount Payable: 11,500.00 KES",
+                text = "Total Amount Payable: ${calculatedValues.totalCharges} KES",
                 color = Color(0xFF7BC043),
                 fontSize = 11.sp
             )
@@ -253,7 +260,7 @@ fun ApplyLoanScreen(
 
             OutlinedTextField(
                 value = accountNumber,
-                onValueChange = {},
+                onValueChange = { viewModel.updateAccountNumber(it) },
                 readOnly = true,
                 trailingIcon = {
                     Icon(
@@ -292,7 +299,7 @@ fun ApplyLoanScreen(
                 )
 
                 Text(
-                    text = "5,750.00 KES",
+                    text = "${calculatedValues.emi} KES",
                     fontWeight = FontWeight.Bold,
                     fontSize = 13.sp
                 )
@@ -310,7 +317,7 @@ fun ApplyLoanScreen(
                 )
 
                 Text(
-                    text = "5,750.00 KES",
+                    text = "${calculatedValues.emi} KES",
                     fontWeight = FontWeight.Bold,
                     fontSize = 13.sp
                 )
@@ -332,5 +339,5 @@ val loanTypes = listOf(
 @Preview(showBackground = true)
 @Composable
 fun ApplyLoanScreenPreview() {
-    ApplyLoanScreen(navController = rememberNavController())
+    ApplyLoanScreen(navController = rememberNavController(), viewModel = viewModel())
 }

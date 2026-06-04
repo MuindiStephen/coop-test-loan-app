@@ -2,9 +2,9 @@ package com.muindi.stephen.coopbanktest.presentation.calculator
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.muindi.stephen.coopbanktest.data.local.room.dao.LoanDao
 import com.muindi.stephen.coopbanktest.data.local.room.entity.LoanCalculationEntity
 import com.muindi.stephen.coopbanktest.domain.models.loan.AmortizationScheduleItem
+import com.muindi.stephen.coopbanktest.domain.repository.LoanRepository
 import com.muindi.stephen.coopbanktest.presentation.utils.LoanCalculator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoanCalculatorViewModel @Inject constructor(
-    private val loanDao: LoanDao
+    private val loanRepository: LoanRepository
 ) : ViewModel() {
 
     private val _principal = MutableStateFlow("")
@@ -50,7 +50,7 @@ class LoanCalculatorViewModel @Inject constructor(
     private val _saveSuccess = MutableStateFlow(false)
     val saveSuccess = _saveSuccess.asStateFlow()
 
-    val savedCalculations: StateFlow<List<LoanCalculationEntity>> = loanDao.getAllCalculations()
+    val savedCalculations: StateFlow<List<LoanCalculationEntity>> = loanRepository.getAllCalculations()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     fun onPrincipalChange(value: String) {
@@ -112,7 +112,7 @@ class LoanCalculatorViewModel @Inject constructor(
         
         viewModelScope.launch {
             try {
-                loanDao.saveCalculation(
+                loanRepository.saveCalculation(
                     LoanCalculationEntity(
                         principal = p,
                         interestRate = r,
@@ -130,16 +130,16 @@ class LoanCalculatorViewModel @Inject constructor(
         }
     }
 
-    fun clearStatus() {
-        _error.value = null
-        _saveSuccess.value = false
-    }
-
     fun loadCalculation(calc: LoanCalculationEntity) {
         _principal.value = calc.principal.toString()
         _interestRate.value = calc.interestRate.toString()
         _tenure.value = calc.tenure.toString()
         _isMonths.value = calc.isMonths
         calculate()
+    }
+
+    fun clearStatus() {
+        _error.value = null
+        _saveSuccess.value = false
     }
 }
